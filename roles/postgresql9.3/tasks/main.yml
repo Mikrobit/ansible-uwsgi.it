@@ -1,0 +1,13 @@
+---
+- name: Upload password file
+  template: src=pgpass.j2 dest=~/.pgpass mode=600
+- name: Initialize instance
+  shell: /usr/lib/postgresql/9.3/bin/initdb -A md5 -U postgres -D db.pg -E UTF-8 --pwfile=/containers/{{ user }}/.pgpass
+- name: Create /run/postgresql
+  shell: mkdir /run/postgresql
+- name: Remove password file
+  file: path=~/.pgpass state=absent
+- name: Upload backup script
+  template: src=postgresql_backup.pl.j2 dest=~/postgresql_backup.pl mode=700
+- name: Vassal
+  template: src=vassal.ini.j2 dest=~/vassals/postgresql.ini

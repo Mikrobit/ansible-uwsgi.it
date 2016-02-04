@@ -1,0 +1,9 @@
+[mysqld]
+pid-file        = /containers/{{ user }}/db.mysql/mysqld.pid
+socket          = /containers/{{ user }}/db.mysql/mysqld.sock
+datadir         = /containers/{{ user }}/db.mysql
+max_allowed_packet = 16M
+character-set-server=utf8
+
+[client]
+socket          = /containers/{{ user }}/db.mysql/mysqld.sock

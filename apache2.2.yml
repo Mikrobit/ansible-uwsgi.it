@@ -1,0 +1,4 @@
+---
+- hosts: "{{ host }}"
+  roles:
+    - apache2.2

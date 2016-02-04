@@ -1,0 +1,18 @@
+[uwsgi]
+; register the domains you need
+domain = {{ domain }}
+
+; load the http proxy router
+plugins = router_http
+offload-threads = 2
+
+; instruct the http router to go in raw mode
+
+subscribe-with-modifier1 = 123
+
+; forward requests to apache in dumb mode
+route-run = httpdumb:127.0.0.1:8080
+; monitor the apache instance
+smart-attach-daemon = /run/apache2.pid apache2ctl -k start -d $(HOME)/etc/apache2
+
+cron = 59 5 -1 -1 -1 logrotate -s /run/logrotate.state $(HOME)/etc/apache2.logrotate.conf

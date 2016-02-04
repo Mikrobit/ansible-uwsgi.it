@@ -1,0 +1,30 @@
+---
+- name: Copy directory tree
+  shell: cp -R /etc/apache2 ~/etc && mkdir -p /var/log/apache2 /run/lock/apache2
+- name: Bind on unprivileged port
+  copy: src=ports.conf dest=~/etc/apache2/ports.conf mode=640
+- name: Remove gnutls.conf
+  file: path=~/etc/apache2/mods-enabled/gnutls.conf state=absent
+- name: Remove gnutls.load
+  file: path=~/etc/apache2/mods-enabled/gnutls.load state=absent
+- name: Remove rpaf.conf
+  file: path=~/etc/apache2/mods-enabled/rpaf.conf state=absent
+- name: Remove rpaf.load
+  file: path=~/etc/apache2/mods-enabled/rpaf.load state=absent
+- name: Enable mod_rewrite
+  file: path=~/etc/apache2/mods-enabled/rewrite.load src=~/etc/apache2/mods-available/rewrite.load state=link
+- name: Enable mod_vhost_alias
+  file: path=~/etc/apache2/mods-enabled/vhost_alias.load src=~/etc/apache2/mods-available/vhost_alias.load state=link
+- name: Enable mod_headers
+  file: path=~/etc/apache2/mods-enabled/headers.load src=~/etc/apache2/mods-available/headers.load state=link
+- name: Upload mod_dumb_remoteaddr
+  copy: src=mod_dumb_remoteaddr.c dest=~/mod_dumb_remoteaddr.c mode=640
+- name: Compile mod_dumb_remoteaddr
+  shell: apxs2 -c mod_dumb_remoteaddr.c
+- name: Create 000-default
+  template: src=000-default.conf.j2 dest=~/etc/apache2/sites-enabled/000-default.conf mode=640
+- name: Setup logrotate
+  copy: src=apache2.logrotate.conf dest=~/etc/apache2.logrotate.conf mode=640
+- name: Create the vassal
+  template: src=vassal.ini.j2 dest=~/vassals/apache.ini mode=640
+

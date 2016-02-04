@@ -1,0 +1,15 @@
+---
+- name: Import Michal Papis gpg key
+  shell: curl -sSL https://rvm.io/mpapis.asc | gpg --import -
+- name: Install RVM stable
+  shell: curl -sSL https://get.rvm.io | bash -s stable
+- name: Enable RVM
+  shell: . ~/.rvm/scripts/rvm
+- name: Install ruby 2.0
+  shell: rvm install 2.0
+- name: Set it as default
+  shell: rvm alias create default ruby-2.0
+- name: Create uwsgi plugin
+  shell: bash -lc '/opt/unbit/uwsgi/uwsgi --build-plugin "/opt/unbit/uwsgi/src/plugins/rack rvm_20"'
+- name: Install rack gem
+  shell: bash -lc 'gem install rack'

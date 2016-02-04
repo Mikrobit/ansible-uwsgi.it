@@ -1,0 +1,14 @@
+---
+- name: Create queue directory
+  file: path=/var/spool/nullmailer/queue state=directory
+- name: Create tmp directory
+  file: path=/var/spool/nullmailer/tmp state=directory
+- name: Create the trigger fifo
+  shell: if [ ! -p /var/spool/nullmailer/trigger ]; then mkfifo /var/spool/nullmailer/trigger; fi
+- name: Configure remote smtp server
+  shell: echo '{{ remotes }}' > ~/etc/nullmailer/remotes
+- name: Set the default host
+  shell: echo '{{ domain }}' > ~/etc/nullmailer/defaulthost
+- name: Activate nullmailer
+  copy: src=vassal.ini dest=~/vassals/nullmailer.ini mode=640
+
