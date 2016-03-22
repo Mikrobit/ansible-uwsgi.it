@@ -1,0 +1,4 @@
+---
+ansible_ssh_private_key_file: ~/.ssh/uwsgi_master
+ansible_ssh_user: "{{ user }}"
+#gather_facts: False
