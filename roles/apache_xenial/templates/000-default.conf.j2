@@ -1,0 +1,19 @@
+<VirtualHost *>
+        ServerAdmin info@{{ domain }}
+        DocumentRoot /var/www/html
+
+        SetEnv SERVER_PORT 80
+        UseCanonicalName Off
+        VirtualDocumentRoot /containers/{{ user }}/www/%0
+
+        <Directory /containers/{{ user }}/www>
+                Options FollowSymLinks
+                AllowOverride All
+                Require all granted
+        </Directory>
+
+        LogFormat "%{Host}i %h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" massive
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log massive
+        PHPIniDir /containers/{{ user }}/etc
+</VirtualHost>

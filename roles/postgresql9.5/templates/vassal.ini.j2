@@ -1,0 +1,5 @@
+[uwsgi]
+pg = $(HOME)/db.pg
+smart-attach-daemon = %(pg)/postmaster.pid /usr/lib/postgresql/9.3/bin/postgres -D %(pg)
+
+cron = 59 3 -1 -1 -1 perl ~/postgresql_backup.pl

@@ -1,0 +1,20 @@
+---
+- name: Create the configuration file
+  template: src=my.cnf.j2 dest=~/.my.cnf
+- name: Create the instance
+  shell: mysqld --defaults-file=~/.my.cnf --initialize-insecure
+  args:
+    creates: /containers/{{ user }}/db.mysql
+- name: Link to /var/run
+  file: src=~/db.mysql dest=/var/run/mysqld state=link
+- name: Create the vassal
+  copy: src=vassal.ini dest=~/vassals/mysql.ini mode=640
+- name: Wait for mysql to start up
+  pause: seconds=10
+- name: Assign a root password
+  shell: mysqladmin -u root password '{{ password }}'
+- name: Setup backup script
+  template: src=mysql_backup.pl.j2 dest=~/mysql_backup.pl mode=750
+- name: Run first test backup
+  shell: perl ~/mysql_backup.pl
+

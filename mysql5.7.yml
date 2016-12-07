@@ -1,0 +1,4 @@
+---
+- hosts: "{{ host }}"
+  roles:
+    - mysql5.7

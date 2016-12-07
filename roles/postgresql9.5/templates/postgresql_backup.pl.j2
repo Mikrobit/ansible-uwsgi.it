@@ -1,0 +1,36 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use DBI;
+use DateTime;
+
+######### Configure here
+#
+my %cfg = (
+        username  => 'postgres',
+        password  => '{{ password }}',
+        backupDir => $ENV{HOME} . '/backup_postgresql',
+);
+
+######### DO NOT CHANGE BELOW !!!
+
+umask 0027;
+
+mkdir $cfg{'backupDir'} unless -d $cfg{'backupDir'};
+
+my $dbh = DBI->connect("dbi:Pg:dbname=template1","postgres",$cfg{'password'});
+my $sth = $dbh->prepare("select datname from pg_database");
+
+if ($sth->execute >=1 ) {
+    my $dt = DateTime->now;
+    my $day = $dt->day_of_month;
+    while( my $row = $sth->fetchrow_hashref ) {
+        my $db = $row->{datname};
+        next if $db eq 'template0';
+        next if $db eq 'template1';
+        mkdir $cfg{'backupDir'} . '/' . $db unless -d $cfg{'backupDir'} . '/'. $db;
+        my $cmd = "PGPASSWORD=" . $cfg{'password'} . " pg_dump -U postgres " . $db . " |bzip2 -9 > " . $cfg{'backupDir'} . "/" . $db . "/" . $day . ".bz2";
+        system( $cmd );
+    }
+}
